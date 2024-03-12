@@ -3,7 +3,7 @@
     
     
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br utf-8">
 
 
 <jsp:include page="head.jsp"></jsp:include>
@@ -43,7 +43,7 @@
                                                 <!-- Basic Form Inputs card start -->
                                                 <div class="card">
                                                     <div class="card-block">
-                                                        <h4 class="sub-title">Cad. Usu�rio</h4>
+                                                        <h4 class="sub-title">Cad. User</h4>
 		                                              
           												 <form class="form-material" action="<%= request.getContextPath() %>/ServletUsuarioController" method="post" id="formUser" >
           												    
@@ -112,7 +112,7 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Pesquisa de usu�rio</h5>
+        <h5 class="modal-title" id="exampleModalLabel">Pesquisar user</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -126,8 +126,8 @@
 	  </div>
 	</div>
 	
-	
-	<table class="table">
+	<div style="height:300px; overflow: scroll;">
+	<table class="table" id="tabelaresultados">
   <thead>
     <tr>
       <th scope="col">ID</th>
@@ -139,7 +139,9 @@
     
   </tbody>
 </table>
-	
+
+	</div>
+	<span id="totalResultados"></span>
 	  </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
@@ -150,6 +152,15 @@
 
 
 <script type="text/javascript">
+
+function verEditar(id) {
+	   
+    var urlAction = document.getElementById('formUser').action;
+    
+    
+    window.location.href = urlAction + '?acao=buscarEditar&id='+id;
+    
+}
 
 
 function buscarUsuario() {
@@ -167,8 +178,20 @@ function buscarUsuario() {
 	     data : "nomeBusca=" + nomeBusca + '&acao=buscarUserAjax',
 	     success: function (response) {
 		 
-		  alert(response);
+	    	 var json = JSON.parse(response);
+	    	 
+	    	 
+	    	 
+	    	 
+		   $('#tabelaresultados > tbody > tr').remove();
+		   
+		   for(var p = 0; p < json.length; p++){
+			   $('#tabelaresultados > tbody').append('<tr> <td>'+json[p].id+'</td> <td>'+json[p].nome+'</td><td><button onclick="verEditar('+json[p].id+')" type="button" class="btn btn-info">Ver</button></td> </tr>');
+		   }
 		 
+		   
+		   document.getElementById('totalResultados').textContent = 'Resultados:' + json.length;
+		   
 	     }
 	     
 	 }).fail(function(xhr, status, errorThrown){
